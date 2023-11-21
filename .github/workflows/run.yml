@@ -26,5 +26,5 @@ jobs:
         uses: nationalarchives/dr2-github-actions/.github/actions/slack-send@main
         if: failure()
         with:
-          message: ":warning: E2E tests have failed"
+          message: ":warning: E2E tests have failed. <https://github.com/nationalarchives/dr2-e2e-tests/actions/runs/${{ github.run_id }}/job/${{ github.run_attempt }}|View the workflow run>"
           slack-url: ${{ secrets.SLACK_WEBHOOK }}

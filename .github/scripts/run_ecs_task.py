@@ -50,8 +50,8 @@ def run_tests():
     security_groups_response = ec2_client.describe_security_groups(
         Filters=[{'Name': 'tag:Name', 'Values': ['intg-outbound-https']}]
     )
-    group_ids = [x["GroupId"] for x in security_groups_response["SecurityGroups"]]
-    subnet_ids = [x["SubnetId"] for x in subnets_response["Subnets"]]
+    group_ids = [sec_group["GroupId"] for sec_group in security_groups_response["SecurityGroups"]]
+    subnet_ids = [subnet["SubnetId"] for subnet in subnets_response["Subnets"]]
     response = ecs_client.run_task(
         launchType='FARGATE',
         networkConfiguration={
@@ -62,7 +62,7 @@ def run_tests():
         },
         taskDefinition='e2e-tests'
     )
-    task_arns = [x["taskArn"] for x in response["tasks"]]
+    task_arns = [task["taskArn"] for task in response["tasks"]]
     describe_response = ecs_client.describe_tasks(tasks=task_arns, include=["TAGS"])
     exit_code = check_exit_code(describe_response)
     get_task_status(exit_code, task_arns)

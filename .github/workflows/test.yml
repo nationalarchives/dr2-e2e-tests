@@ -1,4 +1,4 @@
-name: DR2 Run Lambda Tests
+name: DR2 Run Scalafmt
 on:
   push:
     branches-ignore:

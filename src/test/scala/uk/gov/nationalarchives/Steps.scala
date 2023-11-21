@@ -28,7 +28,7 @@ import java.util.UUID
 object Steps {
   private val url = sys.env("PRESERVICA_API_URL")
   private val secretName = sys.env("PRESERVICA_SECRET_NAME")
-  private val environment = sys.env.getOrElse("ENVIRONMENT", "intg")
+  private val environment = sys.env("ENVIRONMENT")
   private val accountId = sys.env("ACCOUNT_ID")
   private val bucket = s"$environment-ingest-parsed-court-document-test-input"
   private val sqsUrl = s"https://sqs.eu-west-2.amazonaws.com/$accountId/$environment-ingest-parsed-court-document-event-handler"
@@ -108,7 +108,7 @@ object Steps {
     val docxBytes = createDocx(reference)
     val checksum = createChecksum(docxBytes)
     val metadataBytes = createMetadata(cite, uri, reference, checksum)
-    val tarBytes = tarFile(reference, docxBytes, metadataBytes)
+    val tarBytes = createTarFile(reference, docxBytes, metadataBytes)
     for {
       _ <- Logger[IO].info(s"Creating judgment with reference $reference")
       reference <- Stream.emits[IO, Byte](tarBytes).chunks.map(_.toByteBuffer).toUnicastPublisher.use { publisher =>
@@ -117,7 +117,7 @@ object Steps {
     } yield reference
   }.unsafeRunSync()
 
-  def tarFile(reference: UUID, docxBytes: Array[Byte], metadataBytes: Array[Byte]): Array[Byte] = {
+  def createTarFile(reference: UUID, docxBytes: Array[Byte], metadataBytes: Array[Byte]): Array[Byte] = {
     val os = new ByteArrayOutputStream()
     val gzipOs = new GzipCompressorOutputStream(os)
     val tarOut = new TarArchiveOutputStream(gzipOs)

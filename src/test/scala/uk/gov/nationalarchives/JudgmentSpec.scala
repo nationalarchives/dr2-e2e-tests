@@ -11,11 +11,11 @@ import java.util.UUID
 
 class JudgmentSpec extends AnyFlatSpec with GivenWhenThen with ParallelTestExecution with Eventually {
   def urlWithoutCourt(): String = {
-    val id = (Math.random * 1000000).toInt.toString
+    val id = (Math.random * 1000000).toInt
     s"https://example.com/id/2023/$id"
   }
   def validUri(): String = {
-    val id = (Math.random * 1000000).toInt.toString
+    val id = (Math.random * 1000000).toInt
     s"https://example.com/id/ewca/2023/$id"
   }
 
@@ -47,10 +47,10 @@ class JudgmentSpec extends AnyFlatSpec with GivenWhenThen with ParallelTestExecu
     identifiers("SourceID") should equal(uri)
   }
 
-  "A judgment with a valid uri and a valid cite" should "ingest into Preservica" in {
-    Given("A judgment with a valid URI and a valid cite")
+  "A judgment with a valid uri and a cite" should "ingest into Preservica" in {
+    Given("A judgment with a valid URI and a cite")
     val uri = validUri()
-    val reference = createJudgment(Option("ewca"), Option(uri))
+    val reference = createJudgment(Option("[2023] EWCA 1421 (Comm)"), Option(uri))
 
     When("The judgment ingest is triggered")
     sendSQSMessage(reference)
@@ -72,7 +72,7 @@ class JudgmentSpec extends AnyFlatSpec with GivenWhenThen with ParallelTestExecu
   }
 
   "A judgment with a invalid court in the uri and the skipSeriesLookup parameter set" should "ingest into Preservica in the Unknown folder" in {
-    Given("A judgment with a valid URI but an invalid court and an invalid cite")
+    Given("A judgment with a valid URI but an invalid court and a non-standard format cite")
     val uri = validUri().replace("ewca", "invalid")
     val reference = createJudgment(Option("invalid"), Option(uri))
 
@@ -95,7 +95,7 @@ class JudgmentSpec extends AnyFlatSpec with GivenWhenThen with ParallelTestExecu
   }
 
   "A judgment with a missing court in the uri" should "ingest into Preservica in the Unknown folder" in {
-    Given("A judgment with a valid URI but an invalid court and an invalid cite")
+    Given("A judgment with a valid URI but an invalid court and a null cite")
     val uri = urlWithoutCourt()
     val reference = createJudgment(None, Option(uri))
 
