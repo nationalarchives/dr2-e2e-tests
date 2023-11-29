@@ -1,13 +1,13 @@
 from time import sleep
 import boto3
-
+import sys
 import botocore.exceptions
 
 ecs_client = boto3.client("ecs", region_name="eu-west-2")
 ec2_client = boto3.client("ec2", region_name="eu-west-2")
 logs_client = boto3.client("logs", region_name="eu-west-2")
 logs = []
-
+environment = sys.argv[1]
 
 def check_exit_code(task_describe_response):
     container = task_describe_response["tasks"][0]["containers"][0]
@@ -45,10 +45,10 @@ def log_to_console(task_id):
 
 def run_tests():
     subnets_response = ec2_client.describe_subnets(
-        Filters=[{'Name': 'tag:Name', 'Values': ['intg-vpc-private-subnet-eu-west-2a']}]
+        Filters=[{'Name': 'tag:Name', 'Values': [f'{environment}-vpc-private-subnet-eu-west-2a']}]
     )
     security_groups_response = ec2_client.describe_security_groups(
-        Filters=[{'Name': 'tag:Name', 'Values': ['intg-outbound-https']}]
+        Filters=[{'Name': 'tag:Name', 'Values': [f'{environment}-outbound-https']}]
     )
     group_ids = [sec_group["GroupId"] for sec_group in security_groups_response["SecurityGroups"]]
     subnet_ids = [subnet["SubnetId"] for subnet in subnets_response["Subnets"]]
