@@ -16,12 +16,12 @@ jobs:
       - name: Configure AWS credentials from management account
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.ACCOUNT_NUMBER }}:role/intg-run-e2e-tests-role
+          role-to-assume: arn:aws:iam::${{ secrets.ACCOUNT_NUMBER }}:role/${{ inputs.environment }}-run-e2e-tests-role
           aws-region: eu-west-2
           role-session-name: RunTests
       - run: |
           pip install boto3
-          python ./.github/scripts/run_ecs_task.py
+          python ./.github/scripts/run_ecs_task.py ${{ inputs.environment }}
       - name: Send failure message
         uses: nationalarchives/dr2-github-actions/.github/actions/slack-send@main
         if: failure()
