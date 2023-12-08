@@ -2,7 +2,7 @@ name: Build and deploy image
 on:
   push:
     branches:
-      - main
+      - testBranch
 permissions:
   id-token: write
   contents: write
