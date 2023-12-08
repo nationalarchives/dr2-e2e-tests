@@ -1,4 +1,4 @@
-package uk.gov.nationalarchives
+package helpers.steps
 
 import cats.effect.unsafe.implicits.global
 import cats.effect.{IO, Sync}
@@ -20,12 +20,13 @@ import uk.gov.nationalarchives.dp.client.ContentClient.{SearchField, SearchQuery
 import uk.gov.nationalarchives.dp.client.Entities.Entity
 import uk.gov.nationalarchives.dp.client.EntityClient.StructuralObject
 import uk.gov.nationalarchives.dp.client.fs2.Fs2Client.{contentClient, entityClient}
+import uk.gov.nationalarchives.{DAS3Client, DASQSClient}
 
 import java.security.MessageDigest
 import java.time.OffsetDateTime
 import java.util.UUID
 
-object Steps {
+object StepsUtility {
   private val url = sys.env("PRESERVICA_API_URL")
   private val secretName = sys.env("PRESERVICA_SECRET_NAME")
   private val environment = sys.env("ENVIRONMENT")
