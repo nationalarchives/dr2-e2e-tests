@@ -12,7 +12,7 @@ jobs:
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Configure AWS credentials from management account
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
